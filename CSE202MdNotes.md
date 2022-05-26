@@ -100,3 +100,113 @@ The computer only uses binary but hexadecimal is used to allow for easier use of
   * Group bits by 4 (one hex digit) starting formt the lowest bit
 * Hexadecmimal to Binary
   * Exand each hex digit into 4 bits.
+
+<a href="https://ibb.co/2qWL0k4"><img src="https://i.ibb.co/hsLnxmz/b2d11008d0e04aaaa3be70e2a0b1f94a.png" alt="b2d11008d0e04aaaa3be70e2a0b1f94a" border="0"></a>
+
+<a href="https://ibb.co/Wx8t7Gh"><img src="https://i.ibb.co/C1C24mc/f04cc3a33269345d06ffdf23f8fe333e.png" alt="f04cc3a33269345d06ffdf23f8fe333e" border="0"></a>
+
+**Bits and range of numbers**
+* 8 bits - 0x00 to 0xFF (0 to 255)- (2^8-1)
+* 16 bits - (0-65,535) (2^16-1)
+* 32 bits - (0-4,294,901,760)
+* 64 bits - (0-18,446,744,073,709,551,615)
+
+<a href="https://ibb.co/WP8VyqJ"><img src="https://i.ibb.co/z796Rjv/d6d119d5a633a5640bd331f6b2e31527.png" alt="d6d119d5a633a5640bd331f6b2e31527" border="0"></a>
+
+
+**How is data stored in memory**
+* Array of bytes
+* Each byte has an address (the index in the array)
+* Range of the index = size of the memory space
+  
+<a href="https://ibb.co/tsf60z7"><img src="https://i.ibb.co/G2wDZ9K/9371e008a303e1dfa79857bc55153d54.png" alt="9371e008a303e1dfa79857bc55153d54" border="0"></a>
+
+
+<a href="https://ibb.co/4fYtwJx"><img src="https://i.ibb.co/X43LfVT/0e204a90a372d798381587da4de9aefb.png" alt="0e204a90a372d798381587da4de9aefb" border="0"></a>
+
+
+ Word(short) - (2 bytes) `BF 7A`
+ Double word(int) -(4 bytes) `1F 30 BF 7A`
+ Quadword(long)-(8 bytes) `FF 10 25 00 1F 30 BF 7A`
+
+## Little Endian
+<a href="https://ibb.co/xgYxvB4"><img src="https://i.ibb.co/94hQX1M/4a8e88d7d65646fc15954a5395c384b2.png" alt="4a8e88d7d65646fc15954a5395c384b2" border="0"></a>
+
+## Big Endian
+<a href="https://ibb.co/MnRyWss"><img src="https://i.ibb.co/cJNKM11/e697ba6c7a4ab54db72b53b310e099a5.png" alt="e697ba6c7a4ab54db72b53b310e099a5" border="0"></a>
+
+
+* Little endian - lowest byte at lowest address - Intel Processor family - ARM processors
+* Big endian - Highest byte at lowest address - IBM and Oracle (Sun) machines
+* Invisible to the programmer - might be an issue when transferring data bewween different machines - use network standard instead-
+
+**How to check status of machine**
+
+```C
+#include <stdio.h>
+typedef unsigned char* byte_pointer;
+void show_bytes(byte_pointer start, size_t len){
+    for(int i=0; i<len; i++)
+        printf("%x", start[i]);
+        printf("\n");
+}
+int main(){
+ int little = 0x11223344;
+ show_bytes((byte_pointer)&little, sizeof(int));
+}
+```
+World return 44332211 to indicate Little Endian Machine
+
+## Bitwise Operations
+* Boolean Algebra - Operations on a set of two values {0,1} representing false and true
+* Boolean algebra is used in the design of digital systems (computers)
+* Bitwise operations - (NOT,AND,OR,XOR) - C bit level operations - `~, &, |, ^`
+
+<a href="https://ibb.co/JpvZLVL"><img src="https://i.ibb.co/C9bLdgd/1f62456d4b978ff465435021a9104f37.png" alt="1f62456d4b978ff465435021a9104f37" border="0"></a>
+
+Bitwise operations can be used on specific binary patterns on each bit. 
+<a href="https://ibb.co/xJPcz13"><img src="https://i.ibb.co/Lnbq9xv/7c4d5e0fce1cb11a4667d93b91f1b53d.png" alt="7c4d5e0fce1cb11a4667d93b91f1b53d" border="0"></a>
+
+<a href="https://ibb.co/8BB8LmT"><img src="https://i.ibb.co/ZJJTpft/ca6c0793fe8e84a9d7938940a88434f8.png" alt="ca6c0793fe8e84a9d7938940a88434f8" border="0"></a>
+
+<a href="https://ibb.co/NSmFfVT"><img src="https://i.ibb.co/pyR1N0h/82ff758135425e12d17f5981ad54a04f.png" alt="82ff758135425e12d17f5981ad54a04f" border="0"></a>
+
+doubled boolean operators returns -true/false
+
+binary is considered false when equal to zero
+
+`~`is used as `!` when considering boolean
+
+```C
+#include <stdio.h>
+int main(){
+    char x = 0x66;
+    char y = 0x39;
+    printf("x&y = %x\n", x&y);
+    printf("x|y = %x\n", x|y);
+    printf("~x|~y = %x\n", ~x|~y);
+    printf("x&&~y = %x\n", x&&~y);
+    printf("x&&y = %x\n", x&&y);
+    printf("x||y = %x\n", x||y);
+    printf("!x||!y = %x\n", !x|!y);
+    printf("x&!y = %x\n", x&!y);
+}
+```
+```
+x&y = 20
+x|y = 7f
+~x|~y = df
+x&!y = 46
+x&&y = 1
+x||y = 1
+!x||!y = 0
+x&&~y = 0
+```
+
+### Shift operations
+
+* x << k : shift x k positions to the left
+* x >> k : shift x k positions to the right
+<a href="https://ibb.co/v11qWGp"><img src="https://i.ibb.co/7vvCD5P/a71af90dfcec622354dab5c6b7f5839c.png" alt="a71af90dfcec622354dab5c6b7f5839c" border="0"></a>
+
+**(x<<4)>>4 removes second digit, leaving first (Only for 1 byte[0000 0000])**
