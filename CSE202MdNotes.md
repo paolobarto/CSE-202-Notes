@@ -210,3 +210,120 @@ x&&~y = 0
 <a href="https://ibb.co/v11qWGp"><img src="https://i.ibb.co/7vvCD5P/a71af90dfcec622354dab5c6b7f5839c.png" alt="a71af90dfcec622354dab5c6b7f5839c" border="0"></a>
 
 **(x<<4)>>4 removes second digit, leaving first (Only for 1 byte[0000 0000])**
+
+# 5/26/2022
+
+When shifting to the **right** 
+* logical for unsigned- insert 0 on the left
+* Arithmetic for signed- insert the sign bit on the left
+
+<a href="https://ibb.co/Qv0LzXh"><img src="https://i.ibb.co/qY6KXxh/Screen-Shot-2022-05-26-at-10-08-04-AM.png" alt="Screen-Shot-2022-05-26-at-10-08-04-AM" border="0"></a>
+
+## Integer representation 
+* Unsigned-nonnegative integers
+* Signed- positive and negative integers
+
+For every unsinged number there is only 1 way to represent a value in binary - bijection
+
+**Sign magnitude**
+* Sign magnitured - one bit for the sign and the remaining bits for the value 
+* Sign bit = 0 positive number
+* sign bit = 1 negative number
+
+`1111 1111` -127
+`0111 1111` 127
+
+**2s compliment**
+
+`1000 0000` -128
+`0111 1111` 127
+
+- zero has 1 representation 
+- 2s compliment is used is most modern computers 
+- 2s compliment is also a bijection
+
+2s compliment examples 
+* B2T4(0001)= 2^0 = 1
+* B2T4(1011)= -2^3+2^1+2^0=-5
+* B2T4(1111)= -2^3+2^2+2^1+2^0=-1
+
+In my head I am thinking that 2s compliment just means that when the most significant digit is selected, the 1s just indicate the differece from the max negative value.
+
+In hexadecimal the largest value is repreesented by `7F` `0111 1111`
+
+## Floating point representation
+
+* Used to encode real numbers in the form `x=m.2^e`
+* Standard was exstablished in 1985 - IEEE Standard 754
+
+**Real Numbers in binary**
+`1101.11`=2^3 +2^2 + 1 + 2^-1 + 2^-2 = 13 + 1/2 + 1/4 = 13.75
+
+Real numbers are represented using the scientific notation `x=(-1)^s.m.2^2`
+
+- s:sign
+- m: mantassa or significand 
+- e: exponent
+
+**Type float- Single precision representation (32 bits)**
+- Sign: 1 bit
+- exponent: 8 bits
+- mantissa: 23 bits 
+  
+
+<a href="https://ibb.co/GH4L3Q8"><img src="https://i.ibb.co/mNVwF52/Screen-Shot-2022-05-26-at-10-43-32-AM.png" alt="Screen-Shot-2022-05-26-at-10-43-32-AM" border="0"></a>
+
+**Type double- double precision representation (64 bits)**
+- sign: 1 bit
+- exponent: 11 bits
+- mantissa: 52 bits 
+  
+<a href="https://ibb.co/xmzmcsH"><img src="https://i.ibb.co/PT1TbYQ/Screen-Shot-2022-05-26-at-10-45-28-AM.png" alt="Screen-Shot-2022-05-26-at-10-45-28-AM" border="0"></a>
+
+<a href="https://ibb.co/f0MpXJg"><img src="https://i.ibb.co/ZTd8f9j/Screen-Shot-2022-05-26-at-10-48-29-AM.png" alt="Screen-Shot-2022-05-26-at-10-48-29-AM" border="0"></a>
+
+**Converting to decimal**
+1. convert from d=hex to binary
+2. look at first digit
+3. look at exponent (not 0 or 255) value of exponent, minus bias. 
+4. Add 1 to mantissa 
+5. X=(M*2^e)
+
+**If not normalized**
+* E = 0 Therefore dont add 1 to manitssa and convert from binary to decimal and multiply by 2^e
+
+**If not normalized**
+* e is max value therefore e=255 
+
+<a href="https://ibb.co/vH2VMnv"><img src="https://i.ibb.co/Qfspxwj/Screen-Shot-2022-05-26-at-11-02-33-AM.png" alt="Screen-Shot-2022-05-26-at-11-02-33-AM" border="0"></a>
+
+## Signed - Unsigned conversion 
+* Bit pattern is the same (value of the bits)- interpretation is different
+* T2U signed to unsigned
+  * add most signifigant value instead of subtract
+* U2T unsigned to signed 
+  * Subtract most signifigant value instead of add
+
+**Casting from unsigned to signed is changing the intrepretaion for the same binary pattern**
+
+
+```C
+#include <stdio.h>
+int main(){
+ int a = -1;
+ unsigned b = 2147483648; //2 to 31st
+ printf("a = %u = %d\n", a, a);
+ printf(“b = %u = %d\n", b, b);
+}
+```
+The cast can be completed in the print.
+
+## Converting from unsigned to larger data type 
+**for unsigned**
+* Add leading zeros-Zero extension
+
+**For signed**
+* add sign bit - sign extension
+  * Duplicate value of signed digit to all new values 
+
+**When comparing signed and unsigned values, -1 as signed is equal to the largest value in the unsigned variable**
