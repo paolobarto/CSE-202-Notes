@@ -327,3 +327,85 @@ The cast can be completed in the print.
   * Duplicate value of signed digit to all new values 
 
 **When comparing signed and unsigned values, -1 as signed is equal to the largest value in the unsigned variable**
+
+# 5/31 Chapter 2 Continuted 
+
+`bash run_test.sh` is used to run test in PP0. 
+
+On slide 71, demonstrating duplication of significant digit. 
+
+All equal -5
+
+`1011`- 
+`11011`
+`111011`
+
+For conversion to smaller bits, First half of bits is lost. This can cause a change in data. With the newly most signinficant bit becoming the sign bit. 
+
+<a href="https://ibb.co/9s2fTq3"><img src="https://i.ibb.co/862R5j4/image.png" alt="image" border="0"></a>
+
+* Implicit casting (signed-unsigned) leads to non-intuitive behavior - prgoram bugs that are difficult to find
+* C is the only language that supports the type unsigned
+
+### Integer Arithmetic
+* Arithmetic operations are performed on finite bit representation - problems may occur
+* Adding two positive numbers result in a negative number
+* Overflow: The integer result cannot fint within the word size limits of the data type. 
+
+<a href="https://ibb.co/hfB2Nr8"><img src="https://i.ibb.co/jRy3Yq4/image.png" alt="image" border="0"></a>
+
+Way of knowing if unsigned addition is okay
+
+```C
+int uadd_ok(unsigned short x, unsigned short y){
+  unsigned short s = x+y;
+  return s>=x;
+}
+```
+Will return 1 if okay. 
+
+<a href="https://ibb.co/RTpQx9B"><img src="https://i.ibb.co/F4b8SK0/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/5KCmR4b"><img src="https://i.ibb.co/cYR0r34/image.png" alt="image" border="0"></a>
+
+
+**Within negation, smallest possible value in 2s compliment is impossible to be negated. This is because the positive value does not exist for that number.**
+
+To negate bits:
+
+1. ~x
+2. +1
+
+Example: 
+1. `0101`:5
+2. ~`0101`=`1010`=-8+2=-6
+3. `1010`+1= `1011`=-8+2+1=-5
+
+
+#### Integer Multiplication
+
+Although the bits required to hold the product pay be larger than the initial values, the value will be stored in the mumber of bits in each value.
+
+<a href="https://ibb.co/bPgBgMW"><img src="https://i.ibb.co/VtWSWcj/image.png" alt="image" border="0"></a>
+
+**Multiplication by constants**
+* Multiplication takes more time than any other logic/arithematic operation
+* Compulers try to replace the multiplications by constant factors with combinations of + and shoft operations 
+* Shifting a value one position to the left is equivalent to performing unsinged multiplication by 2. 
+
+**Think multiplying by power of 10 in base 10 system you add 0s. In binary add zeros for subsiquient powers of 2**
+
+Example: 
+11*4 =`1011` * `0100` = `101100`
+
+<a href="https://ibb.co/hK7N6Dw"><img src="https://i.ibb.co/p30T7J5/image.png" alt="image" border="0"></a>
+
+**Divisions by powers of 2** 
+* Division is even slower than the multiplication (30+ clock cycles)
+* Shifting a value one position to the right is same as dividing by powers of 2 
+
+<a href="https://ibb.co/Kxqz2WF"><img src="https://i.ibb.co/xqj816J/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/0m85486"><img src="https://i.ibb.co/TYpyjp7/image.png" alt="image" border="0"></a>
+
+A bias is added to the values when performing division on negative values 
