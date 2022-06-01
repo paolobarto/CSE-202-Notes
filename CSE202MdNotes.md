@@ -409,3 +409,121 @@ Example:
 <a href="https://ibb.co/0m85486"><img src="https://i.ibb.co/TYpyjp7/image.png" alt="image" border="0"></a>
 
 A bias is added to the values when performing division on negative values 
+
+# 6/1/2022 
+
+## Floating point multiplcation/addition
+
+* Calculate exact result
+* Make it fit in the desired percision
+  * Overflow if exponent too large
+  * Round to fit the significant bits
+* Rounding 
+  * Approximating a value to its closest bits 
+
+<a href="https://ibb.co/PN8CpH0"><img src="https://i.ibb.co/zrwfcvD/image.png" alt="image" border="0"></a>
+
+* Rounding
+  * Even - avoid statistical bias
+  * All other rounding will over- or under estimate consistently
+
+* Rounding (binary)
+  * To the nearest 1/4 (2 bits to the right of the binary point)
+  * Even (least significant bit = 0)
+
+<a href="https://ibb.co/SwW2htz"><img src="https://i.ibb.co/KxRYM2J/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/wQP2kpD"><img src="https://i.ibb.co/qgc2Smb/image.png" alt="image" border="0"></a>
+
+* Addition multiplication 
+  * Complex Operations - performed by specialized FP units 
+  * Need rounding - overflow detection handling special cases
+
+<a href="https://ibb.co/hFW0szS"><img src="https://i.ibb.co/QvN09w4/image.png" alt="image" border="0"></a>
+
+## Chapter 3 Assembly Basics
+
+**What is assembly language**
+
+* Human version of the machine code
+* Used for fine-grain optimization
+* Used to identify program vulnerabilities
+* Intel family (x86-64) machine language found in laptops, desktops, super computers, and large data centers.
+
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+extern int absdiff(int, int);
+
+int main(int argc, char **argv) {
+ int x = atoi(argv[1]);
+ int y = atoi(argv[2]);
+ printf("|%d - %d| = %d\n", x, y, absdiff(x, y));
+ return 0;
+}
+```
+```s
+.global absdiff
+absdiff:
+ movl %edi, %eax  # %eax = x
+ subl %esi, %eax  # %eax = x - y
+ jge .L1
+ negl %eax        # %eax = -%rax
+.L1:
+ ret              # %eax = |x-y|
+```
+
+### Instruction Set
+
+* Architecture (ISA: Instruction Set Architecture)
+  * The part of the cpu that executes the assembly code (instructions, registers)
+
+* Example of ISAs
+  * Intel: x86,IA32,x86-64
+  * ARM: used in mobile phones 
+
+<a href="https://ibb.co/5FLxysX"><img src="https://i.ibb.co/tXDPtYw/image.png" alt="image" border="0"></a>
+
+* Assembly code
+  * Registers - Data storage
+  * Instructions - data manuipulation
+
+**Registers**
+* Eight (8) 64-bit registers - %rax to %rsp
+* Eight (8) 64-bit registers -%r8 to %r15
+  
+<a href="https://ibb.co/6sZW5ZC"><img src="https://i.ibb.co/zf54w5v/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/DgsLHp2"><img src="https://i.ibb.co/n8ZRNCJ/image.png" alt="image" border="0"></a>
+
+1. %rax
+2. %rbx
+3. %rcx
+4. %rdx
+5. %rsi
+6. %rdi
+7. %rbp
+8. %rsp
+
+<a href="https://ibb.co/BsxJvbs"><img src="https://i.ibb.co/88pwGq8/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/M51Qrzp"><img src="https://i.ibb.co/84xtqy2/image.png" alt="image" border="0"></a>
+
+#### Operands
+Instructions may manuipulate different types of operands
+
+* Immediate valuese- constant integer data ($0x40)
+* Register values - one of the 16 integer registers (%rax to %r15)
+* Memory values - up to 8 consecutive bytes of memory at the address stored at a register. 
+
+<a href="https://ibb.co/pjLf1WW"><img src="https://i.ibb.co/chr6ybb/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/qR3S1vj"><img src="https://i.ibb.co/RCkFHqb/image.png" alt="image" border="0"></a>
+
+#### Data move operations
+<a href="https://ibb.co/6s2DFgh"><img src="https://i.ibb.co/4Nc4pPy/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/TYzMkxh"><img src="https://i.ibb.co/XjmxbrJ/image.png" alt="image" border="0"></a>
+
