@@ -527,3 +527,130 @@ Instructions may manuipulate different types of operands
 
 <a href="https://ibb.co/TYzMkxh"><img src="https://i.ibb.co/XjmxbrJ/image.png" alt="image" border="0"></a>
 
+# 6/2 Chapter 3 continued 
+
+Watch beginning of recording for help with start of Programming Assignment
+
+Uninon-structure pointing to same location in memory interpreting the same data differently.
+
+
+```c
+void swap(long *xp, long *yp){
+  long t0 = *xp;
+  long t1 = *yp;
+  *xp=t1;
+  *yp=t0;
+}
+```
+
+```s
+swap:
+ movq (%rdi), %rax -- %rax=*xp
+ movq (%rsi), %rdx -- %rdx=*yp
+ movq %rdx, (%rdi) -- (%rdi)=*yp
+ movq %rax, (%rsi) -- (%rsi)=*xp
+ ret 
+```
+
+**Reverse engineer the assembly code into its equivalent C code**
+
+```s
+decode:
+movq (%rdi),%r8   #r8=*xp
+movq (%rsi),%rcx  #%rcx=*yp
+movq (%rdx),%rax  #%rax = *zp
+movq %r8,(%rsi)   #*yp = *xp
+movq %rcx,(%rdx)  #*zp = *yp
+movq %rax,(%rdi)  #*xp = *xp
+
+```
+
+<a href="https://ibb.co/m6n6D0z"><img src="https://i.ibb.co/ZWQWLST/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/6s7m2jf"><img src="https://i.ibb.co/dKwrS8z/image.png" alt="image" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'>upload image</a><br />
+
+<a href="https://ibb.co/4YmjcCv"><img src="https://i.ibb.co/CM1nq4C/image.png" alt="image" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'>upload image</a><br />
+
+```C
+long scale(long x, long y, long z){
+ long t = x + 4 * y + 12 * z
+ return t;
+}
+
+```
+
+```s
+scale:
+ leaq (%rdi,%rsi, 4), %rax -- %rax = 4*y+x
+ leaq (%rdx,%rdx, 2), %rdx -- %rdx = 2*z+z=3z
+ leaq (%rax,%rdx, 4), %rax -- %rax = 12z+4*y+x
+ ret
+```
+
+<a href="https://ibb.co/cgxnpnN"><img src="https://i.ibb.co/2n54L4j/image.png" alt="image" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'>upload image</a><br />
+
+**Arithmetic and logical operations**
+
+```C
+long arith(long x, long y, long z){
+ long t1 = x^y; long t2 = z*48;
+ long t3 = t1&0x0F0F0F0F; long t4=t2-t3;
+ return t4;
+}
+```
+
+```s
+arith:
+ xorq %rsi,%rdi           --%rdi=x^y(t1)
+ leaq (%rdx,%rdx, 2),%rax --%rax= z+2z= 3z
+ salq $4,%rax             --%rax= 16*3z= 48z (t2)
+ andl $252645135, %rdi    --%rdi = t1 & 0x0F0F0F0F(t3)
+ subq %rdi, %rax          --%rax = t2 - t3 (t4)
+  ret                       --%rax = t4 
+```
+
+
+**inclass practice**
+
+```c
+long arith2(long x, long y, long z){
+ long t1 = - - -; long t2 = - - -;
+ long t3 = - - -; long t4 = - - -;
+ return t4;
+}
+```
+
+
+```s
+arith2:
+ orq %rsi,%rdi    -- %rdi = x|y = t1
+ sarq $3,%rdi     -- %rdi =(x|y>>3) = t2
+ notq %rdi        -- %rdi = ~(x|y>>3) = t2
+ movq %rdx, %rax  -- %rax = z = t3
+ subq %rdi, %rax  -- %rax = z - ~(x|y>>3) =t4
+ret 
+```
+
+<a href="https://ibb.co/FXfJGK8"><img src="https://i.ibb.co/1MpKHLR/image.png" alt="image" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'>upload image</a><br />
+
+**Practice from assembly to C**
+
+```s
+decode:
+ subq %rdx,%rsi  #%rsi = y-z
+ movq %rsi,%rax  #%rax = y-z
+ imulq %rdi      #%rax = x*(y-z)
+ salq $63, %rax  #%rax = (x*(y-z))<<63
+ sarq $63, %rax  #%rax = ((x*(y-z))<<63)>>63
+ xorq %rdi, %rax #%rax = x^((x*(y-z))<<63)>>63
+ret 
+```
+is an arithmatic shift so if least signifigant is 1 all bits will be 1. 
+
+Code will return x or compliment if x is odd or even 
+```C
+long decode(long x, long y, long z) {
+
+}
+
+```
