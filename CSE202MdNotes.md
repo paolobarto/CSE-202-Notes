@@ -587,7 +587,7 @@ scale:
  ret
 ```
 
-<a href="https://ibb.co/cgxnpnN"><img src="https://i.ibb.co/2n54L4j/image.png" alt="image" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'>upload image</a><br />
+<a href="https://ibb.co/cgxnpnN"><img src="https://i.ibb.co/2n54L4j/image.png" alt="image" border="0"></a><br /><a target='_blank' href='https://imgbb.com/'></a><br />
 
 **Arithmetic and logical operations**
 
