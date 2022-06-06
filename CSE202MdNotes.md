@@ -654,3 +654,182 @@ long decode(long x, long y, long z) {
 }
 
 ```
+
+
+# Assembly Control 6/6
+
+**Assembly control: used for the conditional behavior of the code**
+
+**Program Status**
+
+* Every program running on the cpu has a status (context) described by:
+  * %rip (instruction Pointer) - PC (Program Counter)- Address of the next instruction to be executed
+  * (%rax,...%r15)- temporary data in the registers
+  * %rsp(Stack Pointer)- Location of the stack top
+  * Conditionals code - status of recent operations (zf,cf,sf,of) - Four 1-bit registers
+
+<a href="https://ibb.co/FYNBMsr"><img src="https://i.ibb.co/qgXRf0S/image.png" alt="image" border="0"></a>
+
+* Conditional codes are altered by 
+  * All arithmetic/logical instructions
+  * Comparison and Test instructions
+
+<a href="https://ibb.co/gwHzcXs"><img src="https://i.ibb.co/0Z8hzWP/image.png" alt="image" border="0"></a>
+
+* Instructions that access the condition codes
+  * Set instructions - set by a single byte to 0 or 1 depending on some combinations of the condition codes
+  * Consditional jump instructions - go some other part of the program depending of the vale in the condition codes
+  * Conditional data transfer instructions - move data if certain conditionals are true. 
+  
+
+<a href="https://ibb.co/kGS4wD5"><img src="https://i.ibb.co/x271BgX/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/9ZqZkrc"><img src="https://i.ibb.co/XYzYrCj/image.png" alt="image" border="0"></a>
+
+
+```c
+# define COMP ?
+typedef type_t ?
+type_t comp(type_t a, type_t b){
+  return a COMP b;
+} 
+
+
+```
+
+```s
+comp: 
+cmpl %esi,%edi #a-b, int 
+setl %al        # set %al to 1 if a-b<0  a<b
+
+```
+```s
+comp:
+ cmpq %rsi, %rdi # a - b 
+ setne %al # SET  %al to 1 if a-b!=0 Comp:!=
+
+```
+<a href="https://ibb.co/jgrD90N"><img src="https://i.ibb.co/ZWMxR4j/image.png" alt="image" border="0"></a>
+
+**Jump Instructions**
+
+* all `jmp` instructions use a label - a direct value that indicated the target address
+* Except `jmp *operand` - may use a register or a memory location that holds the target address
+
+* The targer address (jmp instructions) may be 
+  * Absolute an absolute address in memory
+  * PC-relatove: relative to the value of %rip target address=PC + label value
+  * PC = the address of the instruction after the jump instructions
+
+<a href="https://ibb.co/wLR5hcp"><img src="https://i.ibb.co/FWKR4H8/image.png" alt="image" border="0"></a>
+
+
+
+* jmp instructinos are used to implement program flow control constructs
+  * if else
+  * switch 
+  * loops
+  
+**IF-Else**
+
+In c
+
+```
+if(condidtion)
+  then statments
+else
+  else statements 
+```
+
+in assembly
+```
+t= condition
+if(!t)
+  goto false
+  then statements
+  goto done
+false: 
+  else statments
+done: 
+```
+
+
+<a href="https://ibb.co/h75jQ9D"><img src="https://i.ibb.co/GxwLYpc/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/swNFCGs"><img src="https://i.ibb.co/QNT6kRY/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/m5PKVV3"><img src="https://i.ibb.co/d4HvwwR/image.png" alt="image" border="0"></a>
+
+
+<a href="https://ibb.co/pb6QkWj"><img src="https://i.ibb.co/bQjFGH5/image.png" alt="image" border="0"></a>
+
+* Conditional Data Moves
+  * Preferred when?
+    * Avoid delay caused by branch perdiction
+    * When computations are simple
+  * Not preferred when?
+    * Expensive computations
+    * Risky computations
+    * Computations with side effects
+
+
+
+<a href="https://ibb.co/yV5rS8n"><img src="https://i.ibb.co/GFkqTVv/image.png" alt="image" border="0"></a>
+
+
+* loops
+  * Do-While loop
+  * While loop
+  * For loop
+
+**do-while**
+
+```
+do{
+  body_statements
+}while(test_expr)
+```
+
+```
+loop:
+body statements
+t=test_expr
+if(t)
+  goto Loop
+```
+
+<a href="https://ibb.co/yhm9Hb1"><img src="https://i.ibb.co/VH01fPZ/image.png" alt="image" border="0"></a>
+
+
+<a href="https://ibb.co/G7yM7JX"><img src="https://i.ibb.co/H76P720/image.png" alt="image" border="0"></a>
+
+
+**While Loop**
+
+```
+while(test_expr)
+{
+  body_statements
+}
+```
+
+```
+goto test
+loop:
+ body_statements
+test:
+  t= test_expr
+  if(t)
+  goto loop
+```
+
+
+<a href="https://ibb.co/ww7yS7c"><img src="https://i.ibb.co/2sSqvSZ/image.png" alt="image" border="0"></a>
+
+**for loop**
+
+<a href="https://ibb.co/k8bwKM6"><img src="https://i.ibb.co/fp6yMQG/image.png" alt="image" border="0"></a>
+
+
+**Switch Statement**
+
