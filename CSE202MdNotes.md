@@ -833,3 +833,206 @@ test:
 
 **Switch Statement**
 
+# 6/7 Switch statements continued
+
+<a href="https://ibb.co/74vG245"><img src="https://i.ibb.co/VmVv2mZ/Screen-Shot-2022-06-07-at-10-04-53-AM.png" alt="Screen-Shot-2022-06-07-at-10-04-53-AM" border="0"></a>
+
+<a href="https://ibb.co/5hfLg34"><img src="https://i.ibb.co/60fF7Sw/image.png" alt="image" border="0"></a>
+
+## Procedures (Functions)
+
+* Outline 
+  * The Run-time stack
+  * Control Transfer
+  * Data Transfer
+  * Local Storage in the Stack/Registers
+  * Recursive Procedures
+
+
+<a href="https://ibb.co/tDtXVCX"><img src="https://i.ibb.co/jD2Rn4R/image.png" alt="image" border="0"></a>
+
+* When a function P calls function Q
+  * Code switches from one code to another
+  * Transfer of control
+  * Transfer the data
+
+**Calling Process**
+
+* Procedure p calls procedure q(procedure,function,method,subroutine,handler,...)
+* Steps to implement the call:
+  * Passing data 
+  * Passing control
+  * Allocating and deallocating memory
+
+
+* Passing Control
+  * After the call: PC(%rip) = starting @ of q
+  * After return: %rip = @ of the instructions after the call in p
+  * Passing Data
+    * P may pass one or more parameters to Q
+    * Q may return one value to P
+  * Allocating and deallocating memory - If q allocated memory for its local variables, Q must free space before it returns 
+
+**Runtime Stack**
+* The stack is used to implement the calls:
+  * P calls Q - Control and data information of P are pushed in the stack - popped when q returns (pushq and popq)
+  * %rsp points to the top of the stack - grows towards lower addresses
+    * Decrement %rsp - allocate space
+    * Inscrement %rsp - deallocate space
+
+* If the number of arguments is less than 6, only registers are used - no space allocated on the stack
+* Some procedure might not need a stack frame if their local variables can be held in registers and they do not call other procedures
+
+**Control Transfer**
+
+<a href="https://ibb.co/WytDZN8"><img src="https://i.ibb.co/bBJHTjw/image.png" alt="image" border="0"></a>
+
+**Data Transfer**
+* Arguments and return value - most of them are done through registers in x86-64 IA
+  
+<a href="https://ibb.co/Gkxf1BM"><img src="https://i.ibb.co/xGCKcPg/image.png" alt="image" border="0"></a>
+
+* Function proc has four arguments u, a, v, and b. Given the body of the function and its assembly code, determine a valid ordering and types of the four parameters.
+
+```c
+*u += a
+*v += b
+return sizeof(a)+sizeof(b)
+
+```
+
+%edi(a:int) %sil(b:short), %rdx(u) %rcx(v)
+```s
+proc:
+addq %edi, (%rdx)
+addb %sil, (%rcx)
+movl $6, %eax
+ret
+
+```
+
+**Data Transfer**
+* Local storage on the stack
+  * Callee may need to put local varaiables in the stack
+    * Not enough registers to hold the local variables
+    * The local variables are refferred to using pointers (& local variable)
+    * The local variables are arrays or structures
+
+
+* Local storage in the registers
+  * Registers %rbx, %rbp, and %r12-%r15 are callee-saved registers
+  * P calls Q. Q must preserve the value of the callee saved registers
+  * If Q does not ise the callee saved registers, nothing to do
+  * If Q uses the callee saved registers, Q must save the registers on the stack, uses them, and restores the old value of the used registers from the stack before returning 
+
+  **Recursive calls**
+  * Recursive calls are supported by the stack disipline 
+
+<a href="https://ibb.co/Mk9ndGr"><img src="https://i.ibb.co/GQF7mty/image.png" alt="image" border="0"></a>
+
+# 6/8/2022 Assembly: Data
+
+**Outline**
+* Array allocation and access
+* Heterogeneous data structures (struct and union)
+* Data alignement
+* Combining control and data in machine level programs
+
+## Arrays
+* `T A[N]` - Contiguous memory region
+* Size of allocated region: `sizeof(T) * N bytes`
+* `A` is the pointer to the first byte of the memory region
+* `A[i]` is located at the address `A + sizeof(T) * i`
+
+<a href="https://ibb.co/L0HmWb1"><img src="https://i.ibb.co/zmDpYjZ/image.png" alt="image" border="0"></a>
+
+
+<a href="https://ibb.co/m5NXSPp"><img src="https://i.ibb.co/1Gzdb4c/image.png" alt="image" border="0"></a>
+
+
+## 2D Arrays
+* `T A[R] [C]` - Contiguous memory region
+* Stored in row-major order
+* Size of the allocated region: `sizeof(T) * R * C` bytes
+* A is the pointer to the first byte of the memory region `(A[0][0])`
+* `A[0][0]` is located at the address `A + sizeof(T)*(C * i +j)`
+* c is number of columns in row 
+
+<a href="https://ibb.co/DVJFN4w"><img src="https://i.ibb.co/w0kqTyp/image.png" alt="image" border="0"></a>
+
+## Heterogeneous data structures
+
+```c
+struct record{
+  int i;
+  int j;
+  int a[2];
+  int *p;
+};
+
+```
+
+<a href="https://ibb.co/CHdQ7YM"><img src="https://i.ibb.co/2k2dtCs/image.png" alt="image" border="0"></a>
+
+```c
+typedef union{
+  struct {
+    long u;    t1.u->0
+    short v;   t1.v->8
+    char w;    t1.w-> 10
+  } t1; sizeof(t1) = 11 bytes
+  struct {  
+    int a[2];   t2.a[0]->0 t2.a[1]->4
+    char *p;    p->8
+  }t2;    sizeof(t2) = 16 bytes
+} utype; size(utype) = 16 bytes
+
+```
+
+### Improving Data Alignement
+* Improve the memory system performance by reducing memory access (transfer blocks of data)
+* x86-64 CPUs require that the address data must be a multiple of some calue K (typically 2,4, or 8)
+* Any primitive type of size K bytes must have an address that is a multiple of K
+
+```
+char - 1
+short - 2
+int, float - 4
+double, long, char* - 8
+```
+<a href="https://ibb.co/0Y7jyL6"><img src="https://i.ibb.co/QYgFvVT/image.png" alt="image" border="0"></a>
+
+**For structures, gaps may be inserted in the feild allocation to ensure that each strcutre member satisfies the alignment requirements**
+
+* Pointers to structure S1 must satisfy a 4-byte alignment (`struct S1 *p`)
+* The value of `p` must be a multiple of 4 (`p->i` or `p->j`)
+* Compilers may also need to add padding at the end of the structure so that each element in an array of structures will satisfy its alignment requirements.
+  
+
+```c
+struct rec{
+  char *a;  //a-> 0
+  short b;  //b->8 +6 gap
+  double c; //c->16
+  char d;   //d->24+3 gap
+  float e;  //e->28
+  char f;   //f->32 + 7 gap
+  long g;   //g->40
+  int h;    //g->48 rec ends at offset
+}; 56, 52+4 padding
+sizeof(rec) = 56 bytes
+```
+
+rearranged from smallest size to largest.
+```c
+struct rec{
+  char d;   d->0
+  char f;   f->1
+  short b;  b->2
+  float d;  d->4
+  int h;    h->8
+  char *a;  d->12 + 4 gap
+  double c; c->24
+  long g;   g->32
+}; sizeof(rec)= 40 bytes
+```
