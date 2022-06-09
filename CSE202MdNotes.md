@@ -1036,3 +1036,190 @@ struct rec{
   long g;   g->32
 }; sizeof(rec)= 40 bytes
 ```
+
+
+# 6/9 FLoating point in Assembly
+
+## Pointers
+* Every pointer has an associated type (int*, char*, void*)
+* Every pointer has a value - address of a variable or null (0)
+* Pointers are initalized with the & operator
+* Pointers are derefernced with the * operator
+* Arrays and pointers are closly related (a[3] is equavalient to *(a+3),a+3 is calculated as a + sizeof(T) * 3)
+* Casting from one type of pointer to another - change the type, but not the value - the type is used for pointer arithmetic 
+
+```
+char *p; (int *) p+7 -> (p+7 * 4)
+          (int*) (p + 7) —> (p + 7)
+```
+* Pointers to functions: storing and passing references to code
+* The pointer stores the address of the first instruction in the machine representation of the function
+
+```
+int fun(int x, int *p);
+int (*fp)(int, int*);
+fp = fun;
+int y=1;
+int result = fp(3, &y);
+```
+
+<a href="https://ibb.co/LNvF8FL"><img src="https://i.ibb.co/rdvjmjC/image.png" alt="image" border="0"></a>
+
+need to use -g to allow compiler to have access to variables
+```
+run -g 
+```
+
+**Data and Code issues**
+
+* The stack stores data (local variables) and state information ( saved registers and return addresses)
+* Corrupted stack can lead to serious program errors
+* Buffer overflow is common source of stack corruption
+
+
+* Solution 1: Stack Randomization 
+  * Stack Addresses were predictable in old systems
+  * Change the position of the stack from one run of a program to another
+
+
+* Solution 2: Stack corruption detection
+  * Store a special canary value (gaurd value) in the stack (between localnbuffer and the rest of the stack state)
+  * Canary calues are generated randombly each time the program executes
+
+* Solution 3: Limiting executable code regions
+  * Indicate if a memory region is code or data
+  * Only code regions that can be exectuted
+  * Handled by hardware
+
+
+## Floating-Point Code
+* How floating-point values are stored and accessed
+* How to process floating point data
+* How floating point parameters and return values passed
+
+<a href="https://ibb.co/B49R0Bj"><img src="https://i.ibb.co/Q84GyMn/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/kqNtX0h"><img src="https://i.ibb.co/F8RFzJB/image.png" alt="image" border="0"></a>
+
+
+```c
+float fadd(float x, float y){
+  return x+y;
+}
+```
+
+```s
+# x in %xmm0, y in %xmm1
+addss %xmm1, %xmm0
+ret
+```
+
+
+```c
+double dincer(double *p, double v){
+  double x = *p;
+  *p = x+v;
+  return x;
+}
+
+```
+
+
+```s
+# p in %rdi, v in %xmm0
+movapd %xmm0, %xmm1 # Copy v; mov aligned, packed double
+movsd (%rdi), %xmm0 # x = *p; mov scalar double
+addsd %xmm0, %xmm1 # tmp = x + v; add scalar double
+movsd %xmm1, (%rdi) # *p = tmp
+ret
+```
+
+
+```s
+
+#double fun(int *ap, double b, long c, float *dp);
+#%rdi(ap), %xmm0(b), %rsi(c), %rdx (dp)
+fun:
+ vmovss (%rdi), %xmm1             #
+ vcvtsi2sd (%rdi), %xmm2, %xmm2
+ jbe .L8
+ vcvtsi2ssq %rsi, %xmm0, %xmm0
+ vmulss %xmm1, %xmm0, %xmm1
+ vcvtps2pd %xmm1, %xmm0
+ ret
+.L8:
+ vaddss %xmm1, %xmm1, %xmm1
+ vcvtsi2ssq %rsi, %xmm0, %xmm0
+ vaddss %xmm1, %xmm0, %xmm0
+ vcvtps2pd %xmm0, %xmm0
+ ret
+
+```
+
+**Summary**
+
+* Data storage
+  * Arrays
+  * Structs and unions
+  * Data alignment
+* Issues with combining data with control
+* Basic floating-point code
+
+
+
+
+# 6/9 Computer Architecture
+
+**Outline**
+* Processor Design process
+* Instruction execution phases
+* Pipelined Execution
+* Pipeline limitations
+* Solutions to pipline limitations
+
+**Learning Outcomes**
+* Describe the process of designing a process
+* Describe the instruction execution cycle
+* Understand pipelineing and its limitations
+* Understand how the performance of a processor is determined
+
+
+**Processor Design**
+* ISA - Instruction set architecture - set of instructions that the processor is able to run
+* Link Between: 
+  * Compiler writers - write code that runs on ISA
+  * Processor designers - design circuit that runs ISA
+
+
+**Processor Design**
+* Learn the inner working of a system you use daily
+* Understand how the overall computer system works (later chapters)
+* Career in embedded systems (contain processors)
+* Work in processor design team (CAD tools)
+
+
+<a href="https://ibb.co/F8JmT3S"><img src="https://i.ibb.co/5svGH4N/image.png" alt="image" border="0"></a>
+
+
+**Combinational Logic**
+* Operations performed by the processor
+  * addition/subtraction
+  * mul/div
+  * bitwise operations
+  * Comprison/Test Operations
+
+**Sequential Logic**
+* Storage of data/instructions
+  * Registers
+  * Memory
+  * Condition codes
+
+
+<a href="https://ibb.co/g6rwsPv"><img src="https://i.ibb.co/R7gPLBh/image.png" alt="image" border="0"></a>
+
+
+**Instruction execution cycle**
+
+<a href="https://ibb.co/g9TfPGW"><img src="https://i.ibb.co/548Sndj/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/B2P3np6"><img src="https://i.ibb.co/QvcQDgH/Screen-Shot-2022-06-09-at-11-33-45-AM.png" alt="Screen-Shot-2022-06-09-at-11-33-45-AM" border="0"></a>
