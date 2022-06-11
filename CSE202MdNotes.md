@@ -1223,3 +1223,99 @@ fun:
 <a href="https://ibb.co/g9TfPGW"><img src="https://i.ibb.co/548Sndj/image.png" alt="image" border="0"></a>
 
 <a href="https://ibb.co/B2P3np6"><img src="https://i.ibb.co/QvcQDgH/Screen-Shot-2022-06-09-at-11-33-45-AM.png" alt="Screen-Shot-2022-06-09-at-11-33-45-AM" border="0"></a>
+
+
+# 6/10 Processor Architecture
+
+
+<a href="https://ibb.co/Pc4pVSm"><img src="https://i.ibb.co/X7pBGw2/image.png" alt="image" border="0"></a>
+
+
+By creating the same 5 phases in an instruction, each phase can be completed by using parallelism.
+
+<a href="https://ibb.co/C03Yvvf"><img src="https://i.ibb.co/x5tBGGN/image.png" alt="image" border="0"></a>
+
+**Instruction Execution Cycle**
+* The Pipeline increases the number of instructions executred per unit of time
+* The Pipeline does not chnage the time to execute one instruction
+* Modern processors: 5 to 15 pipleline stages
+* Works well when instructions are independent 
+
+<a href="https://ibb.co/1QqMMCG"><img src="https://i.ibb.co/B3ZGGh2/image.png" alt="image" border="0"></a>
+
+
+**Processor performance analysis**
+* Pipeline - Ideally CPI =1, CPI - Cycles per instruction
+* Stalling may increase CPI
+  * Load/use adds 1 bubble in the pipeline
+  * Branch Prediction adds 2 bubbles in the pipleine
+  * ret adds 3 bubbles in the pipline 
+
+<a href="https://ibb.co/5jGgMgv"><img src="https://i.ibb.co/M1Zx2xp/image.png" alt="image" border="0"></a>
+
+* Load instructions - 25% of all the instructions - 20% of the load instructions cause load hazards
+* Conditional branches 20% of all the instructions - 60% are taken and 40% not taken
+  
+
+<a href="https://ibb.co/Mh6H4f3"><img src="https://i.ibb.co/dcgvqtz/image.png" alt="image" border="0"></a>
+
+
+* Other issues
+  * Multi-cycle instructions - FP division.multiplications - up to 60 cycles - issue these instructions to specialized hardware
+  * Memory access instructions - may take 3-20 cycles (cache or main memory) - up to 1,000,000 cycles if data is in the hard disk
+
+# Program Optimization
+
+**Program Performance**
+* Asymptotic Complexity - Big-O Notation
+* Performance of the program as a function of the input size - ignore constraints
+* Constant matter when you want to improve the execution time of a program
+* O(n)-O(n/2)-O(n/10)
+
+
+**Optimize program performance at different levels**
+* Alorgithm
+* Data Structures
+* Procedures or functions
+* Loops
+
+**Must understand how programs are executed on modern processors**
+* Instruction execution cycle
+* Memory Access
+* Measuring program performance and bottlenecks
+* Optimize performance without altering the code behavior and modularity
+
+**Compilers try to optimize while benerating code machine**
+```
+gcc -00 no optimization
+gcc -01 basic set of optimization
+gcc -02 (or higher O3) - extensive optimization
+```
+
+**Optimizations performed by compilers**
+* Register allocation
+* Code selection and ordering 
+* Dead code elimination
+* Eliminate minor inefficiencies
+* Compilers have difficulty overcoming "optimization blockers"
+* Memory aliasing and procedure calls
+
+**Compilers have limitations**
+* Operate under constraint (cannot modify the prgram behavior and cannot make generalizations)
+* Programmer knows the range of data, comilers don't
+* Perform opimizations with individual functions or procedures
+* Alalysus based on static information (cannot anticipate runtime data)
+* When in doubt compilers are conservative. 
+
+
+-------
+
+
+
+**Optimizing Blockers**
+
+
+**General Optimization Techniques**
+* Code motion
+* Reducing procedure calls
+* Eliminating unneeded memory references
