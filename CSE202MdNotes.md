@@ -1319,3 +1319,92 @@ gcc -02 (or higher O3) - extensive optimization
 * Code motion
 * Reducing procedure calls
 * Eliminating unneeded memory references
+
+
+# 6/13 Program performance
+
+* Optimizations performed by Compilers
+  * Register allocation
+  * Code selection and ordering (scheduling)
+  * Dead code elimination
+  * Eliminate minor inefficencies
+
+
+* Memory Aliasing
+  * When two pointers may designate the same memory location
+
+
+* Function calls and side effects
+
+```c
+long f();
+long func1(){
+  return f() + f() + f() + f();
+}
+long func2(){
+  return 4*f();
+}
+```
+
+func1 and func2 seem to do the same thing
+
+
+**General optimization techniques**
+* Code motion
+* Reducing procedure calls
+* Eliminateing unneeded memory references. 
+
+
+**Code motion**
+* Identify computations that are performed multipe times (inner loops)
+* Moving code without affecting the behavior of the program
+* Done by compilers with caution to avoid side effects 
+
+Ex. Moving legnth size function out of loop since will call each iteration
+
+
+**Reducuing procedure calls**
+* Procedures introduce overhead
+* Procedures block optimizations
+
+**Eliminating unnecessary memory references**
+* Memory access operations are slower than other opertions
+* Eliminate memory erferences when possible 
+
+Similar to reducing funciton calls, can choose to referance locations in memory much less
+
+* Compilers will not make such optimizations because of possible memory aliasing
+
+combine3(v,get_vec_start(v)+2);
+
+combine4(v, get_vec_start(v)+2);
+
+## Understanding modern processors
+* To optimize programs, we need to understand how the processor executes the instructions
+* Exploit the independency between instructions to execute as many as possible in parallel
+* The order of the execution may be changed as long as the overall sequential behavior is not altered
+
+* Two lower bounds (HW) characterize the maximum performance of a program
+* Latency bound - a series of operations must be performed in strict sequence (data dependency)
+* Throughouput bound - Raw computing capacity of the processor’s functional units
+
+
+* Modern processors are
+  * Pipelined - one instruction/cycle - (CPI=1)
+  * Superscaler - many instructions may be executed at the same time (CPI<1)
+  * Out-of-order - the order of execution of the instructions may be changed to increase parallelism 
+
+<a href="https://ibb.co/LkkQQrP"><img src="https://i.ibb.co/YRRDDXW/image.png" alt="image" border="0"></a>
+
+
+* Functional Unit Performance
+  * Latency - number of cycles to complete one operation
+  * Issue time - minimum number of cycles between two independent operations of the same type
+  * Capacity - number of functional units capable of executing the same operation (number of operations that can be issued at the same time)
+  * Throughput - number of operations that can be executed per clock cycle - (Capacity/issue) operations per cycle
+
+
+**Data flow graph**
+* A program can be represented as a data flow graph
+* A data flow graph show data dependencies between the operations
+* Data flow graphs allow identitfying critical paths in the program
