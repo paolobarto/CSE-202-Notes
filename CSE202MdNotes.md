@@ -1408,3 +1408,90 @@ combine4(v, get_vec_start(v)+2);
 * A program can be represented as a data flow graph
 * A data flow graph show data dependencies between the operations
 * Data flow graphs allow identitfying critical paths in the program
+
+# 6/14
+
+**Loop unrolling**
+* Low level optimization that reduces the number of iterations for a loop by increasing the numbers of elements computed in each iteration
+* Redusces the # of operations that do not contribute to the program result (loop indexing and conditional branching)
+* Exposes or shows ways in which we can reduce the number of operations in the critical path
+* Perfomred by gcc for optimization level  `-03` or higher
+
+**Loop unrolling with multiple accumulators**
+
+* multiple accumulators
+  * Compilers don't risk transformations with FP operations to avoid errors (associativity)
+* Reassociation transformation
+  * Shifting the order in which the elements are processeed
+  * Combine: change the order in which the vector elements are combined
+
+**Limiting Factors**
+* Processor Capacity
+  * Program requires N iterations
+  * Processor has C functional units for the operations
+  * The processor unita have an issue time I
+  * Program needs (N*I)/C cycles to execute
+
+**Register Spilling**
+* A program has a degree of parallelism P that exceeds the number of registers. The compiler will resort to spilling, storing some of the temporary values in memory, by allocating space on the runtime stack
+
+**Branch mis-prediction penalties**
+* Execute the instructions at the predicted branch without committing changes to registers or memory until the outcome of the branch condition is known
+* Use conditional data moves to execute both branches and commit only at the right branch
+* 19-cycle mis-prediction penalty
+* Mis-predictions rate is low in modern processors 
+* Loop conditions are always taken except for the last iteration
+* Branch prediction is reliable for regular paths in the code
+* If a number < 0 - prediction will do poorly because it is difficult to predict the sign (dependent on the data)
+
+**Write/read dependency**
+* Load operations look in the store unit buffer for the @ to load. If the @ is found, it takes the value from the store unit without waiting for the data to be written to memory
+
+
+1. High-level design
+2. Basic Coding principles
+3. Low-Level optimizations
+
+
+**High-level design**
+* Choose appropreaite and efficient algorithms and data structures
+* Avoid asympomatic poor performance
+
+
+**Basic coding principle**
+* Avoid optimization blockers
+  * Excessive function calls
+  * Move computaitons out of loops when possible
+  * Eliminate unnecessary memory references - introduce temporary result - store result in an array or global variable only when the final value has been computed
+  
+**low level optimization**
+* Unroll loops to reduce overhgead and enablke further optimization
+* Find ways to increas ILP using multiple accumulators and re-association with loop unrolling
+* Rewrite conditional operations in functional style to enable using conditional data transfers 
+
+
+## Program profiling
+
+**OPtimizations should not alter the behavior of the program**\
+**Extensive testing is required after applying optimizations**
+
+
+* A profiler is a tool used to identifty performance bottlenecks in a program
+* Eliminate performance bottlenecks
+* Apply OPtimization techniques
+* Usefule for large programs only
+
+
+* `gprof` on Unix
+* Determine hoe much CPU time was spend on each function in the program
+  * Gice a sense of the funcitons contribution to the overall run time
+  * Cound the number of tiumes each function is called
+  * Understand the dynamic behavoir of the program
+
+
+**Properties of `gprof`**
+  * Timings are not percise
+  * Calling information is reliable
+  * Timing of the library functions is not shows 
+
+<a href="https://ibb.co/0D60wBm"><img src="https://i.ibb.co/QbTW58p/image.png" alt="image" border="0"></a>
