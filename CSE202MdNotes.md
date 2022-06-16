@@ -1495,3 +1495,109 @@ combine4(v, get_vec_start(v)+2);
   * Timing of the library functions is not shows 
 
 <a href="https://ibb.co/0D60wBm"><img src="https://i.ibb.co/QbTW58p/image.png" alt="image" border="0"></a>
+
+# 6/15 Memory Hierarchy
+
+**Memory**
+* RAM abstractiopnp: array of bytes
+* Computer RAM is packaged as multiple chips
+* RAM is volatile (data lost when power turned off)
+
+**Types of Ram(Volatile)**
+* Static RAM (SRAM) - fully sequential circuit (two gates with two loops) - keeps its state
+* Dynnamic RAM (DRAM) - one transistor circuit - equivalent to a capacitance (leaks) - needs refreshing to keep its state
+
+
+**Types of non-Volatile memory**
+* ROM- read-only memory - data written once when manufactured
+* PROM - Programmable ROM - can be programmed once
+* EPROM- Erasable PROM - can be erased and reprogrammed - bulk erase
+* EEPROM - Electronically EPROM - can be electronically erased and reporgrammed
+* FLash Memory - EEPROM with partial erase capacity (block level) - < 100,000 erasing 
+
+
+## Disk
+* Disk - platters - two surfaces - tracks - sectors 
+* Disk capacity - Maximum number of bits that can be stored 
+* Capacity determined by:
+  * Recording Density - bits/inch segement (track)
+  * Track density - tracks/inch radial segment
+  * Areal density - bits/in^2 -(reconding density * track density)
+
+<a href="https://ibb.co/kDwYxFw"><img src="https://i.ibb.co/z2BKrwB/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/qRqfJcy"><img src="https://i.ibb.co/K94kKf0/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/Kcg3dZK"><img src="https://i.ibb.co/kVTWjnm/image.png" alt="image" border="0"></a>
+
+**Disk Access Time**
+* Disk Access Time = seek time + rotation time + transfer time
+* Seek Time - time to position r/w heads over the track (targer sector - 3 to 9 ms)
+* Rotational latency - time waiting for the target sector to pass under r/w head - time to rotatie half a full spin - typical RPM = 7200 RPMs
+* Transfer Time - time to read the bits in the target sector
+
+<a href="https://imgbb.com/"><img src="https://i.ibb.co/zS0s9jM/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/2Md4VXk"><img src="https://i.ibb.co/ZgxD4yM/image.png" alt="image" border="0"></a>
+
+* Disk Access Time
+  <a href="https://ibb.co/2FLZB0P"><img src="https://i.ibb.co/HKMhQLY/image.png" alt="image" border="0"></a>
+
+* Access time domionatied by seek time and rotational latency
+* Accessing the first but is the most time consuming,  the rest of the sector bits are transfered fast
+
+**CPU - Disk interaction**
+1. CPU sens a request to the disk controller 
+2. Disk controller transfers the sector to the memory address (DMA) 
+3. Disk Controller notifices the CPU when the data is ready
+
+
+* How to reduce the gap by minimizing the access time to memory
+  * Create layers of memory between the CPU and the Main memory
+  * Memory with fast access is near the CPU and stores the most frequently accessed data
+  * Explot a fundamental property of computer programs - locality
+
+## Locality
+* Programs tend to used data and instructions with addresses near of equal to those they have used recently
+  * Temporal Locality: recently referenced data/instructions are likely to  be referenced again in the near future (loops)
+  * Spatial locality: data/instructions with enarby addresses to be refernced close together in time
+
+**Temporal Locality**
+  * Reference variable sum at each iteration
+  * cycle through loop instructions
+
+**Spatial Locality**
+  * Reference array elements sequentially
+  * Refernce instructions in sequence
+
+**Measurement**
+* Locality is determined qualitatively
+* Requires programming experience
+
+## Memory Hierarchy 
+* Fast Storage technologies are more expensive, have less capacity and consume more power
+* The gap between CPU and MM speed slows the CPU
+* Well-written programs exhibits good lovality
+* Organize data storage as a memory hierarchy
+
+
+## Cache Memory
+* **Cache**: Smaller, faster memory that holds a subset of the data fromt he alrger, slower memory
+* Programs tend to access data at level k more often than they access data at level k+1 locality
+* Memory that costs as cheap storage at the top, but allow access rate at the fast storage near the bottom. 
+
+<a href="https://ibb.co/MG3xn7d"><img src="https://i.ibb.co/pR9B2dq/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/5GwzfjX"><img src="https://i.ibb.co/xXdcRgK/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/K7nh872"><img src="https://i.ibb.co/pZqwkZf/image.png" alt="image" border="0"></a>
+
+**Cache Organization**
+**Cache size = (S x E x B) bytes**
+* Direct mapping - E=1, S=number of lines
+* 2-way Set Associative - E=2, S = number of lines/2
+* K-way set associative - E=k, S=number of lines/k
+* Fully associative - E = number of lines -s = 1
+
+
+<a href="https://ibb.co/wBYc7Pj"><img src="https://i.ibb.co/pbnhQM5/image.png" alt="image" border="0"></a>
