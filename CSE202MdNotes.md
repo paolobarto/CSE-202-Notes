@@ -1601,3 +1601,63 @@ combine4(v, get_vec_start(v)+2);
 
 
 <a href="https://ibb.co/wBYc7Pj"><img src="https://i.ibb.co/pbnhQM5/image.png" alt="image" border="0"></a>
+
+
+
+# 6/20 Cache memory
+
+**Organization**
+* direct Mapping - more conflict miss (all addresses with the same set nuymber are madded to the same line)
+* 2-way associative - flkexability to map addresses to two different lines in a set
+* E-way set associative - Flexability to map addresses to E different lines (compare tage to K tags at the same time)
+* Fully Assocaiative - Any address may be mapped to any line - more hardware to compare all athe tags in parallel
+
+**Types of Cache misses**
+* Cold (compulsory) miss - when the cache is empty
+* Conflict miss - when two blocks are assigned to the same chache line
+* Capacity miss - when the size of the referenced blocks is greater than the chache size
+
+**Write Issues**
+* Write operation - same as read operation but 
+  * Should data be updated in the cache only or in the cache and the MM 
+  * Write operations with HIT
+    * Write through - wroite immeddiately to the cache and the main memory
+    * Write-back - defer write to memory until the cache line is replaced (one dirty bit to indicate if a chache line is differenet from MM or not)
+  * Write operations with Miss
+    * Write-allocate - load into cache and upate line in chache- good if more writes to the location in the future
+    * No-write-allocate - write directly to memory - no load into cache
+  * Line Replacement
+    * When multiple lines may be selected to replace and load a new line, which line is select3ed
+    * FIFO - First line loaded is selected to be replaced
+    * LRU - Least Recently Used line is selected
+    * Random - line selected randomly
+
+
+**Miss Rate**
+* Miss Rate 
+  * Fraction of memory references not found in the cache
+* Hit Rate
+  * Fraction of memory references that hit (1-miss rate)
+* Hit Time
+  * Time to deliver data from a cache line to the processor (included chacking if the line is in the cache)(L1:4 Cycles, L2 10 cycles)
+* Miss Penalty 
+  * Additional Time requied because of a miss
+
+<a href="https://ibb.co/KD0cZ04"><img src="https://i.ibb.co/nBgq2gd/image.png" alt="image" border="0"></a>
+
+
+* Cache size
+  * Increase the hit rate but will increase the hit time
+* Block size
+  * Can help increaese the hit rate, but imply a smaller number of cache lines and an increase in the miss penaly
+* Associativity
+  * Higher associativity reduced conflict misses, but requires more complex hardware to compare the tags and select the lines for replacement (miss penalty)
+
+<a href="https://ibb.co/M9YhjP5"><img src="https://i.ibb.co/6N3ZpDJ/image.png" alt="image" border="0"></a>
+
+
+* Repeated referecnes to local variable are good - will be cached in registers
+* Stride-1 reference patterns are good because chaches store data as contiguous blocks (spatial locality) 
+
+<a href="https://ibb.co/KypgSvh"><img src="https://i.ibb.co/mzVKgWT/image.png" alt="image" border="0"></a>
+
