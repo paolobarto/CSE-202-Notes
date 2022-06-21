@@ -1661,3 +1661,151 @@ combine4(v, get_vec_start(v)+2);
 
 <a href="https://ibb.co/KypgSvh"><img src="https://i.ibb.co/mzVKgWT/image.png" alt="image" border="0"></a>
 
+
+# 6/21 Exception control flow
+
+**Outline**
+
+* Execptions
+* Processes
+* Process Control
+* Signals 
+
+
+**Control Flow**
+* Sequence of instructions executed by the processor
+* Control flow may be modified by:
+  * `jump` instructions
+  * `call` and `return` instructions
+
+
+* Not enough to react to events that are external to the running program or the CPU
+  * Arrivbal data from the disk or network adapter
+  * Errors at exewcution time
+  * User interrups program using `ctrl-c`
+* Abrupt changes in the control flow: `Exception Control Flow (ECF)`
+
+
+**Why ECF**
+
+* Basic mechanisms that the OS uses to implement I/O, processes and virtual memory
+* How programs interact with the OS (system calls)
+* Create applications with ECF mechanismas (creating/waiting/deleting processes, detected and responsing to exveptional events) -shells and web servers
+* Understand concurrency and how its implemented (processes and threads)
+* How the try-throw-catch mechnaism is implemented 
+
+<a href="https://ibb.co/n0sr79p"><img src="https://i.ibb.co/H2D7t6Z/image.png" alt="image" border="0"></a>
+
+**Mechanisms**
+*  Low-level mechanisms 
+   *  Exceptions-change in control flow in response to a system event (change in system state) - Implemented by hardware and operating system
+* High-level mechanisms
+  * Processes Context Switch (Processes) - Implemented by OS and hardware timer
+  * Signals - implemented by the OS
+
+**Exceptions**
+* Transfer of control to the OS kernal in response to some event
+* Examples of events: division by 0, page fault, overflow, I/O operations completed, intrerrupting a program using `ctrl-c`
+  
+<a href="https://ibb.co/x5g4KnQ"><img src="https://i.ibb.co/s31BpTr/image.png" alt="image" border="0"></a>
+
+**Exception Table**
+* each type of event has a unique exception number k
+* k is the index into the exception table
+* Handler k is called each time exception k occurs
+* Base address (@) of the exception table stored in a dedicated register
+
+**Asychronous Exceptions**
+* Caused by events external to the processor
+* Inidicated by setting the processor's interrupt pin
+* Handler returns to the next instruction
+* Examples
+  * Timer interrupt: used by the kernal to take back control from user programs
+  * I/O interrupt from external device 
+
+**Synchronous exceptions**
+* Caused by events that occur as a result of executing an instruction (faulting instruction)
+* Traps
+  * Intententional
+  * System calls/ breakpoint traps
+* Faults 
+  * Unintentional but possibly recoverable
+  * Page faults, floating-point exceptions
+  * either re-execute current instruction or aborts
+* Aborts
+  * Unintentional and recoverable
+  * illegal instruction, parity errors, machine check
+  * abort current program 
+
+## Processes
+* High level mechanisms for exception control flow
+  * Processes context switch (processes)
+  * Signals
+  * Non-local jumps
+
+* A process is an instance of a running program
+* One of the most profound ideas in cs
+* Not a program (executable code save on disk)
+* Not the processor (machine that executes the program)
+* When a program is loaded in memory, a process is created
+
+
+ Each process has its own two key abstractions
+
+* logical Control Flow
+  * each process seems to use the CPU exclusively (implemented by the OS kernal using context switching)
+* Private address Space
+  * Each process seems to use the main memory exclusively
+
+**Multiprocessing - the illusion**
+  * Computern runs many processes simultaneously (web browers, email clients, editors, background tasks)
+
+* **Multiprocess**- The traditional reality
+  * Sigle processor executes multiple processes concurrently
+  * Address space managed by virtural memory system
+  * Register values for non-exectuing processes saved in memory
+
+
+* **The modern reality** 
+  * Multicore processors
+  * Mutliple CPU's on single chip that share the main memory
+  * Each core can execute a seperate process
+  * Scheduling processes on cores done by the OS kernal
+
+### Concurrent Processes
+* Each processes has a logical control flow
+  * Two processes run currently if their flows overlap in time, otherwise they are sequential 
+
+<a href="https://ibb.co/936nTs1"><img src="https://i.ibb.co/Kzd6qFf/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/F8FbbtD"><img src="https://i.ibb.co/kqtggFS/image.png" alt="image" border="0"></a>
+
+**Process**
+* Process Control
+  * How are processes created? Terminated? Stopped?
+  * Process has a unique ID (pid)
+  * Process has three different states
+
+1. Running
+   1. Executing or waiting to be executed
+2. Stopped
+   1. Execution suspended until futher notice
+3. Terminated
+   1. Execution stopped permanently
+  
+**Terminating a process**
+* A process becomes terminated for
+  * Recieving a singal whose default action is to terminate
+  * Returning from the main funciton
+  * Calling the system function `exit()`
+  * `void exit(int status)` terminates with an exit status
+  * Normal status is 0, non-zero status for error
+  * Return 0; in main means return with normal status
+  * Exit is called once but never returns
+  
+
+**Creating a process**
+* Parent process creates a new running child process by calling the function fork()
+  * fork() return 0 to the child process
+  * fork() return the child's process id (pid) to the parent process
+  * fork() returns a negative value for error. 
