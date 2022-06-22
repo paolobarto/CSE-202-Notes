@@ -1809,3 +1809,63 @@ combine4(v, get_vec_start(v)+2);
   * fork() return 0 to the child process
   * fork() return the child's process id (pid) to the parent process
   * fork() returns a negative value for error. 
+
+
+# 6/22 Processes Continued
+
+
+Error handling in functions is produced by creating a wrapper function for the given function. Calling a Unix error function displaying the current Error.
+
+* Creating a process
+  * Parent process creates a new running child process by calling the function fork()
+  * Child is a clone of the parent
+    * Child get an identitcal but seperate copy of the parent virtual address space
+    * Child gets identitcal (but seperate) copy of the parent's virtual address space
+    * Child gets identical copies of the parent's fild descriptors
+    * Child has a different PID than the parent
+    * fork() is called once but retuns twice.
+
+Example:
+* The shell uses fork() to run programs you invoke from the command line
+* Web servers (like apache) use fork() to create multiple server processes (each handles requests in its own space). If one dies or leaks memory....
+* Google chrome uses for() to handle each page within a seperate process. Prevents client-side code on one page from bringing your whole browser doen
+* fork() is used to spawn processes in some parallel programs on different machines 
+
+* Process Graph
+  * Graph to model the behavior of concurrent programs
+  * Capturing the partial ordering of statements in a concurrent program
+  * Each vertex is the execution of a statement
+  * a - b means a happens before b
+  * Edges can be labeled with current values of variables
+  * Each graph begins with a vertiex  with no input edge
+  * Any topological sort of the graph corresponds to a feesable ....
+
+
+<a href="https://ibb.co/6gtSWz7"><img src="https://i.ibb.co/kQDTSjs/image.png" alt="image" border="0"></a>
+
+<a href="https://ibb.co/yyjVtt7"><img src="https://i.ibb.co/G2SFyyN/image.png" alt="image" border="0"></a>
+
+
+**Reaping Child Process**
+
+* Action of erasing a terminated child process
+* When a process terminates, it still consumes system resources
+* Terminated process is called a zombie process
+* The parent reaps a terminated process using wait or waitpid functions and the kernal deletes the zombie child process. 
+
+* If a parent process does not reap a child process, when the parent terminates, the orphaned child will become a child of the init process
+* Explicit reaping is required in long-running processes
+
+Things like terminals will create child process without end and need to be explicitly terminated.
+
+**synchronizing parent process with children**
+* Parent reaps explicitly a child by calling the wait funciton
+* Suspends the current process until one of its children terminates
+* Return value is the pid of the child process that terminated
+* If child_status != null, the integer it points to will have a value that indicates the reason is child is terminated and the exit status
+
+<a href="https://ibb.co/wJ3Ck6x"><img src="https://i.ibb.co/YDY8Cjq/image.png" alt="image" border="0"></a>
+
+
+<a href="https://ibb.co/9s85zxS"><img src="https://i.ibb.co/18vWhCj/image.png" alt="image" border="0"></a>
+
