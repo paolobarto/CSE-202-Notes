@@ -1869,3 +1869,96 @@ Things like terminals will create child process without end and need to be expli
 
 <a href="https://ibb.co/9s85zxS"><img src="https://i.ibb.co/18vWhCj/image.png" alt="image" border="0"></a>
 
+
+
+# 6/23
+
+**Shell**
+* shell waits correctly for, and reaps, foreground jobs
+* issue with background jobs
+
+
+## Signals
+
+* High level software form of exceptional control flow
+* Processes and the kernal can interrupt other proceess using signals
+* Signal is small message that notifies a process that an event of some type has occurred in the system
+  * Simlar to exceptiions and interrupts
+  * Sent from the kernal to a process
+  * Signals have a unique id
+
+* If a process attempts to divide by 0, the kernal sends a SIGFPE(8) to the process
+* If a process executes an illegal instruction, the kernal sends a SIGILL(4) to the process
+* If a process makes an illegal memory refereance, the kernal sends a SIGSEGV (11) to the process
+* If you type CTL-C while a process is running in the foreground, the kernal sends a SIGINT(2) to the process
+* A process can forcibly terminate another process by sending it a SIGKILL
+
+**Sending Signals**
+* The kernal sends (delivers) s signal to a destination process bu updating some state in the context of the destination process
+* The kernal sends a signal for one of the following reasons
+  * Kernal has detected a system even such as /0 (SIGFPE) of the termination of a child (SIGCHLD) 
+  * Another process has invoked the kill system
+
+**Receiving Signals**
+* A destination process receives a singal when it is forced by the kernal to react in some way to the divery of the signal
+* Possible ways to react:
+  * Ignore the signal
+  * Terminate the process
+  * Catch the singal by executing a user-level function called signal handler 
+
+**Pending and Blocked signals**
+* Pending: signal is sent but not yet recieved - ONly one signal pending for any particular type - If a signal of type k is pending, any other singal of type k sent to the process is discarded
+* A process can block the reciept of certain signals - blocked signals can be sent but will not be recieved until the signal is unblocked
+* Kernal maintains two bit vectors in the context of each process
+* Pending vector- set of pending signals - kernal sets bit k in pending when a signal of type k is delivered - kernals clears bit k in pending when a signal of type k is recieved
+* Blokcked vector (signal mask) - set of blocked signals - can be set and cleared by using sigprocmask function (singal mask)
+
+<a href="https://ibb.co/j3dJmms"><img src="https://i.ibb.co/ygD4tt7/image.png" alt="image" border="0"></>
+
+**Sending Signals**
+* From the keyboard (ctrlc or ctr)
+
+
+* The funciton alarm()
+* A process can send a SIGNALARM toitself calling the alarm function
+  `unsinged int alarm(unsigned int time)`
+* The function arranges for the kernal to send a SIGALRM signal to the calling process after time seconds have elapsed
+
+
+**Recieving Signals**
+* Whenever the kernal switches context to process p, it computes pnb = pending & ~blocked set of pending non-blocked signals for process p
+* if(pnb==0), pass control to the next instruction in the logical flow of p
+* if(pnb!=0), chose at least, non-zero bit k in pnb and force process p to recieve the signal
+  * The recipet of the singal triggers some action by p
+  * Repeat for all non-zero k in pnb
+* Pass control to the next instruction in the logcal flow of p 
+* Deafuly predifined actions for signals
+  * Process terminates
+  * Process stops until restarted by a SIGCONT signal
+  * Process ignores the signal
+* A process can change the deafult action by defining a handler for the signal
+* The only exceptions are SIGSTP and SIGKILL
+
+**Installing signal handlers**
+`handler_t *signal(int signum, handler_t *handler);`
+* THe signal function modifies the deafult action associated with the recipt of signal signum
+* handler is SIG-IGN (ignore) of SIG-DFL (revert to deafult action)
+* Or handler is the @ of a user-level signal handler
+* Called when the process recieves a signal
+
+
+* Installing the handler: calling signal()
+* Catching the signal: when the handler is called
+* Handling the signal: whent he handler is running 
+When the handler executes its return statemtn, control is usually passed back to the instruction in the control flow of the process that was interrupter by the receipt of the signal.
+
+* A singnal handler is a seperate logic flow (not a process) that runs concurrently with the main program
+* **Nested handlers** - handlers can be interrupted by other handlers 
+
+**Blocking and unblocking signals**
+
+
+**Signal Handlers**
+* Handlers can be tricky for the following reasons:
+  * They run concurrently with the main program and chare the same global variables
+  * The rules for how and when signals are recicieved are often unintuitive 
