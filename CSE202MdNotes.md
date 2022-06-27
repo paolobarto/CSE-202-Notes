@@ -1962,3 +1962,81 @@ When the handler executes its return statemtn, control is usually passed back to
 * Handlers can be tricky for the following reasons:
   * They run concurrently with the main program and chare the same global variables
   * The rules for how and when signals are recicieved are often unintuitive 
+
+
+# 6/27 missed first 30 minutes
+
+**Explicitly waiting for signals**
+* Waiting for signals with sigsuspend
+  * `int sigsuspend(const sigest_t *mask)`
+* Temporarily replaces the current blocked set with mask and suspends the process until the reciept of a signal
+* If the handler is run, sigsupend retruns after the handler returs and restores back to the resolved code
+
+
+
+## non-Local jumps 
+
+* Powerful (but dangerous) user-level mechanism for transferring control to an arbitray location
+* Break the procedure call discipline
+* Useful for error recovers and signal handling
+
+`int setjmp(jmp_buf j)`
+
+`void longjmp...`
+
+
+**Setjmpp**
+* must be called before long jmp
+* Identifies a return sitr for a sibsequent longjmp
+* Called once, returns one of more times
+* Remebers where you are by storing the current register context, stack pointer, and PC value in `jmp_buf`
+* returns 0 the first time
+
+**longjmp**
+* Return from setjmp remembered by jmp buffer j again...
+* ... this time returning i instead of 0
+* Called after setjmp
+* Called once, but never returns
+* Restores register context (stack pointer, base pointer, PC value)
+
+
+## Virtual memory
+
+* RAM - Array of contiguous bytes
+* Physical addressing : CPU sends a physical address to read from or to write in main memory
+* Used in simple systems that do one specific thing and run the same programs in the main memory
+* Modern computers use virtual addresses that are translated into physical addresses at runtime
+* One of the greatest ideas in computer science
+* Each process has the impression to work with a private infinte memory space
+
+**Address spaces**
+* Linear address space - contiguous integer addresses: {0,1,2,3,...., N-1} requires n bits (N=2^n)
+* Virtual address space - Virtual addreess on n bits
+* Physical address space - physical address on m bits
+  
+
+**Caching**
+* Virtual memory (VM)- Array of contiguous bytes stored on disk
+* Content from VM is cached in the physical memory
+* Data transferred from VM to PM in blocks called pages
+* Size of one page is a power of 2 (P=2^p)
+
+**Virtual Page may be**
+* Unallocated: not allocated yet in the memory (stack or heap regions) - no data or disk space associated with the @ range
+* Uncached: allocated page that is not cached in the physical memory
+* Cached: allocated page that is currently cached in the physical memory (region of .text or .data currently being used by the process)
+
+* The partition into pages is driven by the miss penalty of the PM (10x slower than SRAM, 10,000x faster than disk)
+  * Large page (block) size: typically 4KB to 2MB
+  * Fully associative-any VP can be placed in any PP or frame
+  * Highly sophisticated - expensive algorithms
+  * Too complicated and open-ended to be implemented in HW
+  * Write-back rather than write-through
+
+
+* The OS uses a data structure (page table) to manage VM
+  * Valid bit - page cached/uncached (1/0)
+  * Field @ - location of the page in MM or VM 
+  * Memory resident kernal data structure 
+  * Size = virtual @ space/page size
+  *  
